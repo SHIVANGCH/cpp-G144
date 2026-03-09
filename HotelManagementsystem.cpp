@@ -48,4 +48,22 @@ public:
         inputPerson();
 
         cout<<"Enter Customer ID : ";
-        cin>>
+        cin>>customerID;
+        
+    void displayCustomer()
+    {
+        displayPerson();
+
+        cout<<"Customer ID : "<<customerID<<endl;
+    }
+
+};
+class Room // base class Room
+{
+
+protected:
+
+    int roomNumber;
+    bool booked;
+
+public:
