@@ -1,69 +1,36 @@
-#include<iostream>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <stdexcept>
+
 using namespace std;
-class Person{
+/* PERSON BASE CLASS*/
+
+class Person
+{
 protected:
     string name;
     int age;
-    string phone;
-public:
-  Person(){
-        name= ;
-        age=0;
-        phone="";
-}
 
-    void inputPerson(){
+public:
+    virtual void getDetails()
+    {
         cout<<"Enter Name: ";
         cin>>name;
 
         cout<<"Enter Age: ";
         cin>>age;
 
-        cout<<"Enter Phone Number: ";
-        cin>>phone;
-}
-
-    void displayPerson(){
-        cout<<"Name : "<<name<<endl;
-        cout<<"Age : "<<age<<endl;
-        cout<<"Phone : "<<phone<<endl;
-}
-};
-class Customer : public Person
-{
-
-private:
-
-    int customerID;
-
-public:
-
-    Customer()
+        if(age <=0)
+            throw runtime_error("Invalid Age");
+    } 
+virtual void displayDetails()
     {
-        customerID=0;
+        cout<<"Name: "<<name<<endl;
+        cout<<"Age: "<<age<<endl;
     }
 
-    void inputCustomer()
-    {
-        inputPerson();
-
-        cout<<"Enter Customer ID : ";
-        cin>>customerID;
-        
-    void displayCustomer()
-    {
-        displayPerson();
-
-        cout<<"Customer ID : "<<customerID<<endl;
-    }
-
+    virtual ~Person(){}
 };
-class Room // base class Room
-{
 
-protected:
-
-    int roomNumber;
-    bool booked;
-
-public:
+ 
