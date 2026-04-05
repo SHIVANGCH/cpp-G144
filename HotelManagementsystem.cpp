@@ -32,5 +32,157 @@ virtual void displayDetails()
 
     virtual ~Person(){}
 };
+ /* customer class */
+class Customer : public Person
+{
+private:
+    int customerID;
+    string phone;
 
+public:
+
+    void getDetails() override
+    {
+        Person::getDetails();
+
+        cout<<"Enter Customer ID: ";
+        cin>>customerID;
+
+        cout<<"Enter Phone Number: ";
+        cin>>phone;
+    }
+
+    void displayDetails() override
+    {
+        Person::displayDetails();
+
+        cout<<"Customer ID: "<<customerID<<endl;
+        cout<<"Phone: "<<phone<<endl;
+    }
+
+    int getID()
+    {
+        return customerID;
+    }
+};
+
+/* room base class */
+
+class Room
+{
+protected:
+    int roomNumber;
+    bool booked;
+    double price;
+
+public:
+
+    Room()
+    {
+        booked=false;
+        roomNumber=0;
+        price=0;
+    }
+
+    virtual void setRoom(int number,double p)
+    {
+        roomNumber=number;
+        price=p;
+    }
+
+    virtual void displayRoom()
+    {
+        cout<<"Room Number: "<<roomNumber<<endl;
+        cout<<"Price: "<<price<<endl;
+
+        if(booked)
+            cout<<"Status: Booked"<<endl;
+        else
+            cout<<"Status: Available"<<endl;
+    }
+
+    virtual void bookRoom()
+    {
+        if(booked)
+            throw runtime_error("Room already booked");
+
+        booked=true;
+    }
+
+    virtual void checkout()
+    {
+        if(!booked)
+            throw runtime_error("Room already empty");
+
+        booked=false;
+    }
+
+    bool isBooked()
+    {
+        return booked;
+    }
+
+    int getRoomNumber()
+    {
+        return roomNumber;
+    }
+
+    double getPrice()
+    {
+        return price;
+    }
+
+    virtual string roomType()
+    {
+        return "Standard";
+    }
+
+    virtual ~Room(){}
+};
+
+*/ deluxe room class */
+
+class DeluxeRoom : public Room
+{
+public:
+
+    DeluxeRoom()
+    {
+        price=3000;
+    }
+
+    string roomType() override
+    {
+        return "Deluxe";
+    }
+
+    void displayRoom() override
+    {
+        cout<<"--- Deluxe Room ---"<<endl;
+        Room::displayRoom();
+    }
+};
+
+*/ suite room class */
+
+class SuiteRoom : public Room
+{
+public:
+
+    SuiteRoom()
+    {
+        price=5000;
+    }
+
+    string roomType() override
+    {
+        return "Suite";
+    }
+
+    void displayRoom() override
+    {
+        cout<<"--- Suite Room ---"<<endl;
+        Room::displayRoom();
+    }
+};
  
