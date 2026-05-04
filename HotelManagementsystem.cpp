@@ -1,361 +1,211 @@
-#include<iostream>
-#include<string>
-#include<vector>
-
+#include <iostream>
+#include <fstream>
+#include <cstring>
 using namespace std;
 
-/* ---------------------------
-   BASE CLASS : PERSON
----------------------------*/
-
-class Person
-{
-protected:
-    string name;
-    int age;
-    string phone;
-
+class Customer {
 public:
-    Person()
-    {
-        name="";
-        age=0;
-        phone="";
-    }
-
-    void inputPerson()
-    {
-        cout<<"Enter Name: ";
-        cin>>name;
-
-        cout<<"Enter Age: ";
-        cin>>age;
-
-        cout<<"Enter Phone Number: ";
-        cin>>phone;
-    }
-
-    void displayPerson()
-    {
-        cout<<"Name : "<<name<<endl;
-        cout<<"Age : "<<age<<endl;
-        cout<<"Phone : "<<phone<<endl;
-    }
-};
-
-/* ---------------------------
-   DERIVED CLASS : CUSTOMER
----------------------------*/
-
-class Customer : public Person
-{
-private:
-    int customerID;
-
-public:
-    Customer()
-    {
-        customerID=0;
-    }
-
-    void inputCustomer()
-    {
-        inputPerson();
-
-        cout<<"Enter Customer ID : ";
-        cin>>customerID;
-    }
-
-    void displayCustomer()
-    {
-        displayPerson();
-
-        cout<<"Customer ID : "<<customerID<<endl;
-    }
-};
-
-/* ---------------------------
-   BASE CLASS : ROOM
----------------------------*/
-
-class Room
-{
-protected:
     int roomNumber;
-    bool booked;
-
-public:
-    Room()
-    {
-        roomNumber=0;
-        booked=false;
-    }
-
-    void setRoomNumber(int n)
-    {
-        roomNumber=n;
-    }
-
-    int getRoomNumber()
-    {
-        return roomNumber;
-    }
-
-    bool isBooked()
-    {
-        return booked;
-    }
-
-    void bookRoom()
-    {
-        booked=true;
-    }
-
-    void freeRoom()
-    {
-        booked=false;
-    }
-
-    virtual int getPrice()
-    {
-        return 0;
-    }
-
-    virtual void displayRoom()
-    {
-        cout<<"Room Number : "<<roomNumber<<endl;
-    }
-};
-/* ---------------------------
-   STANDARD ROOM
----------------------------*/
-
-class StandardRoom : public Room
-{
-public:
-    int getPrice()
-    {
-        return 2000;
-    }
-
-    void displayRoom()
-    {
-        cout<<"Room Number : "<<roomNumber<<endl;
-        cout<<"Room Type : Standard"<<endl;
-        cout<<"Price : 2000 per night"<<endl;
-    }
-};
-
-/* ---------------------------
-   DELUXE ROOM
----------------------------*/
-
-class DeluxeRoom : public Room
-{
-public:
-    int getPrice()
-    {
-        return 4000;
-    }
-
-    void displayRoom()
-    {
-        cout<<"Room Number : "<<roomNumber<<endl;
-        cout<<"Room Type : Deluxe"<<endl;
-        cout<<"Price : 4000 per night"<<endl;
-    }
-};
-
-/* ---------------------------
-   BOOKING CLASS
----------------------------*/
-
-class Booking
-{
-private:
-    Customer customer;
-    Room* room;
+    char name[50];
+    char address[100];
+    char phone[15];
     int days;
-    int bill;
+    float bill;
 
-public:
-    Booking()
-    {
-        days=0;
-        bill=0;
-        room=NULL;
+    void input() {
+        cout << "\nEnter Room Number: ";
+        cin >> roomNumber;
+        cin.ignore();
+        cout << "Enter Name: ";
+        cin.getline(name, 50);
+        cout << "Enter Address: ";
+        cin.getline(address, 100);
+        cout << "Enter Phone: ";
+        cin.getline(phone, 15);
+        cout << "Enter Number of Days: ";
+        cin >> days;
+        bill = days * 1000; // fixed rate
     }
 
-    void createBooking(Room* r)
-    {
-        try
-        {
-            if(r->isBooked())
-            {
-                throw "Room already booked!";
-            }
-
-            room=r;
-
-            cout<<"\nEnter Customer Details\n";
-            customer.inputCustomer();
-
-            cout<<"Enter number of days : ";
-            cin>>days;
-
-            r->bookRoom();
-
-            bill = r->getPrice() * days;
-
-            cout<<"Booking successful!\n";
-        }
-        catch(const char* msg)
-        {
-            cout<<"Error : "<<msg<<endl;
-        }
-    }
-
-    void displayBooking()
-    {
-        cout<<"\n------ BOOKING DETAILS ------\n";
-
-        customer.displayCustomer();
-
-        cout<<"Room Number : "<<room->getRoomNumber()<<endl;
-
-        cout<<"Days Stayed : "<<days<<endl;
-
-        cout<<"Total Bill : "<<bill<<endl;
+    void display() {
+        cout << "\nRoom Number: " << roomNumber;
+        cout << "\nName: " << name;
+        cout << "\nAddress: " << address;
+        cout << "\nPhone: " << phone;
+        cout << "\nDays Stayed: " << days;
+        cout << "\nTotal Bill: " << bill << endl;
     }
 };
-/* ---------------------------
-   HOTEL CLASS
----------------------------*/
 
-class Hotel
-{
+class Hotel {
 private:
-    vector<Room*> rooms;
-    vector<Booking> bookings;
-
+    Customer cust;
 public:
-    Hotel()
-    {
-        int i;
-
-        for(i=1;i<=5;i++)
-        {
-            StandardRoom* s=new StandardRoom();
-            s->setRoomNumber(i);
-            rooms.push_back(s);
-        }
-
-        for(i=6;i<=10;i++)
-        {
-            DeluxeRoom* d=new DeluxeRoom();
-            d->setRoomNumber(i);
-            rooms.push_back(d);
-        }
+    void addCustomer() {
+        ofstream fout("hotel.dat", ios::binary | ios::app);
+        cust.input();
+        fout.write((char*)&cust, sizeof(cust));
+        fout.close();
+        cout << "\nCustomer Added Successfully!\n";
     }
 
-    void showRooms()
-    {
-        cout<<"\n------- ROOM LIST -------\n";
-
-        for(int i=0;i<rooms.size();i++)
-        {
-            rooms[i]->displayRoom();
-
-            if(rooms[i]->isBooked())
-                cout<<"Status : Booked\n";
-            else
-                cout<<"Status : Available\n";
-
-            cout<<endl;
+    void displayAll() {
+        ifstream fin("hotel.dat", ios::binary);
+        while (fin.read((char*)&cust, sizeof(cust))) {
+            cust.display();
+            cout << "\n----------------------";
         }
+        fin.close();
     }
 
-    void bookRoom()
-    {
-        int number;
+    void searchCustomer() {
+        int room;
+        cout << "\nEnter Room Number to Search: ";
+        cin >> room;
 
-        showRooms();
+        ifstream fin("hotel.dat", ios::binary);
+        bool found = false;
 
-        cout<<"Enter room number to book : ";
-        cin>>number;
-
-        if(number<1 || number>rooms.size())
-        {
-            cout<<"Invalid room number\n";
-            return;
+        while (fin.read((char*)&cust, sizeof(cust))) {
+            if (cust.roomNumber == room) {
+                cust.display();
+                found = true;
+                break;
+            }
         }
 
-        Booking b;
-
-        b.createBooking(rooms[number-1]);
-
-        bookings.push_back(b);
+        if (!found)
+            cout << "\nCustomer Not Found!";
+        fin.close();
     }
 
-    void showBookings()
-    {
-        cout<<"\n------ ALL BOOKINGS ------\n";
+    void deleteCustomer() {
+        int room;
+        cout << "\nEnter Room Number to Delete: ";
+        cin >> room;
 
-        if(bookings.size()==0)
-        {
-            cout<<"No bookings yet\n";
-            return;
+        ifstream fin("hotel.dat", ios::binary);
+        ofstream fout("temp.dat", ios::binary);
+
+        bool found = false;
+
+        while (fin.read((char*)&cust, sizeof(cust))) {
+            if (cust.roomNumber != room) {
+                fout.write((char*)&cust, sizeof(cust));
+            } else {
+                found = true;
+            }
         }
 
-        for(int i=0;i<bookings.size();i++)
-        {
-            bookings[i].displayBooking();
+        fin.close();
+        fout.close();
+
+        remove("hotel.dat");
+        rename("temp.dat", "hotel.dat");
+
+        if (found)
+            cout << "\nRecord Deleted Successfully!";
+        else
+            cout << "\nRecord Not Found!";
+    }
+
+    void updateCustomer() {
+        int room;
+        cout << "\nEnter Room Number to Update: ";
+        cin >> room;
+
+        fstream file("hotel.dat", ios::binary | ios::in | ios::out);
+        bool found = false;
+
+        while (file.read((char*)&cust, sizeof(cust))) {
+            if (cust.roomNumber == room) {
+                cout << "\nEnter New Details:\n";
+                cust.input();
+
+                file.seekp(-sizeof(cust), ios::cur);
+                file.write((char*)&cust, sizeof(cust));
+                found = true;
+                break;
+            }
         }
+
+        file.close();
+
+        if (found)
+            cout << "\nRecord Updated Successfully!";
+        else
+            cout << "\nRecord Not Found!";
+    }
+
+    void calculateBill() {
+        int room;
+        cout << "\nEnter Room Number: ";
+        cin >> room;
+
+        ifstream fin("hotel.dat", ios::binary);
+        bool found = false;
+
+        while (fin.read((char*)&cust, sizeof(cust))) {
+            if (cust.roomNumber == room) {
+                cout << "\n---- BILL DETAILS ----";
+                cust.display();
+                found = true;
+                break;
+            }
+        }
+
+        if (!found)
+            cout << "\nCustomer Not Found!";
+        fin.close();
     }
 };
 
-/* ---------------------------
-   MAIN FUNCTION
----------------------------*/
+void menu() {
+    cout << "\n\n====== HOTEL MANAGEMENT SYSTEM ======\n";
+    cout << "1. Add Customer\n";
+    cout << "2. Display All Customers\n";
+    cout << "3. Search Customer\n";
+    cout << "4. Update Customer\n";
+    cout << "5. Delete Customer\n";
+    cout << "6. Calculate Bill\n";
+    cout << "7. Exit\n";
+    cout << "Enter Choice: ";
+}
 
-int main()
-{
-    Hotel hotel;
-
+int main() {
+    Hotel h;
     int choice;
 
-    while(true)
-    {
-        cout<<"\n===== HOTEL MANAGEMENT SYSTEM =====\n";
+    do {
+        menu();
+        cin >> choice;
 
-        cout<<"1. View Rooms\n";
-        cout<<"2. Book Room\n";
-        cout<<"3. View Bookings\n";
-        cout<<"4. Exit\n";
-
-        cout<<"Enter choice : ";
-        cin>>choice;
-
-        switch(choice)
-        {
-            case 1:
-                hotel.showRooms();
-                break;
-
-            case 2:
-                hotel.bookRoom();
-                break;
-
-            case 3:
-                hotel.showBookings();
-                break;
-
-            case 4:
-                cout<<"Thank you\n";
-                return 0;
-
-            default:
-                cout<<"Invalid choice\n";
+        switch (choice) {
+        case 1:
+            h.addCustomer();
+            break;
+        case 2:
+            h.displayAll();
+            break;
+        case 3:
+            h.searchCustomer();
+            break;
+        case 4:
+            h.updateCustomer();
+            break;
+        case 5:
+            h.deleteCustomer();
+            break;
+        case 6:
+            h.calculateBill();
+            break;
+        case 7:
+            cout << "\nExiting...";
+            break;
+        default:
+            cout << "\nInvalid Choice!";
         }
-    }
+    } while (choice != 7);
+
+    return 0;
 }
