@@ -1,19 +1,29 @@
-#include <iostream>
-#include <string>
-#include <vector>
-#include <stdexcept>
+#include<iostream>
+#include<string>
+#include<vector>
 
 using namespace std;
-/* PERSON BASE CLASS*/
+
+/* ---------------------------
+   BASE CLASS : PERSON
+---------------------------*/
 
 class Person
 {
 protected:
     string name;
     int age;
+    string phone;
 
 public:
-    virtual void getDetails()
+    Person()
+    {
+        name="";
+        age=0;
+        phone="";
+    }
+
+    void inputPerson()
     {
         cout<<"Enter Name: ";
         cin>>name;
@@ -21,105 +31,69 @@ public:
         cout<<"Enter Age: ";
         cin>>age;
 
-        if(age <=0)
-            throw runtime_error("Invalid Age");
-    } 
-virtual void displayDetails()
-    {
-        cout<<"Name: "<<name<<endl;
-        cout<<"Age: "<<age<<endl;
-    }
-
-    virtual ~Person(){}
-};
- /* customer class */
-class Customer : public Person
-{
-private:
-    int customerID;
-    string phone;
-
-public:
-
-    void getDetails() override
-    {
-        Person::getDetails();
-
-        cout<<"Enter Customer ID: ";
-        cin>>customerID;
-
         cout<<"Enter Phone Number: ";
         cin>>phone;
     }
 
-    void displayDetails() override
+    void displayPerson()
     {
-        Person::displayDetails();
-
-        cout<<"Customer ID: "<<customerID<<endl;
-        cout<<"Phone: "<<phone<<endl;
-    }
-
-    int getID()
-    {
-        return customerID;
+        cout<<"Name : "<<name<<endl;
+        cout<<"Age : "<<age<<endl;
+        cout<<"Phone : "<<phone<<endl;
     }
 };
 
-/* room base class */
+/* ---------------------------
+   DERIVED CLASS : CUSTOMER
+---------------------------*/
+
+class Customer : public Person
+{
+private:
+    int customerID;
+
+public:
+    Customer()
+    {
+        customerID=0;
+    }
+
+    void inputCustomer()
+    {
+        inputPerson();
+
+        cout<<"Enter Customer ID : ";
+        cin>>customerID;
+    }
+
+    void displayCustomer()
+    {
+        displayPerson();
+
+        cout<<"Customer ID : "<<customerID<<endl;
+    }
+};
+
+/* ---------------------------
+   BASE CLASS : ROOM
+---------------------------*/
 
 class Room
 {
 protected:
     int roomNumber;
     bool booked;
-    double price;
 
 public:
-
     Room()
     {
-        booked=false;
         roomNumber=0;
-        price=0;
-    }
-
-    virtual void setRoom(int number,double p)
-    {
-        roomNumber=number;
-        price=p;
-    }
-
-    virtual void displayRoom()
-    {
-        cout<<"Room Number: "<<roomNumber<<endl;
-        cout<<"Price: "<<price<<endl;
-
-        if(booked)
-            cout<<"Status: Booked"<<endl;
-        else
-            cout<<"Status: Available"<<endl;
-    }
-
-    virtual void bookRoom()
-    {
-        if(booked)
-            throw runtime_error("Room already booked");
-
-        booked=true;
-    }
-
-    virtual void checkout()
-    {
-        if(!booked)
-            throw runtime_error("Room already empty");
-
         booked=false;
     }
 
-    bool isBooked()
+    void setRoomNumber(int n)
     {
-        return booked;
+        roomNumber=n;
     }
 
     int getRoomNumber()
@@ -127,62 +101,28 @@ public:
         return roomNumber;
     }
 
-    double getPrice()
+    bool isBooked()
     {
-        return price;
+        return booked;
     }
 
-    virtual string roomType()
+    void bookRoom()
     {
-        return "Standard";
+        booked=true;
     }
 
-    virtual ~Room(){}
-};
-
-*/ deluxe room class */
-
-class DeluxeRoom : public Room
-{
-public:
-
-    DeluxeRoom()
+    void freeRoom()
     {
-        price=3000;
+        booked=false;
     }
 
-    string roomType() override
+    virtual int getPrice()
     {
-        return "Deluxe";
+        return 0;
     }
 
-    void displayRoom() override
+    virtual void displayRoom()
     {
-        cout<<"--- Deluxe Room ---"<<endl;
-        Room::displayRoom();
+        cout<<"Room Number : "<<roomNumber<<endl;
     }
 };
-
-*/ suite room class */
-
-class SuiteRoom : public Room
-{
-public:
-
-    SuiteRoom()
-    {
-        price=5000;
-    }
-
-    string roomType() override
-    {
-        return "Suite";
-    }
-
-    void displayRoom() override
-    {
-        cout<<"--- Suite Room ---"<<endl;
-        Room::displayRoom();
-    }
-};
- 
