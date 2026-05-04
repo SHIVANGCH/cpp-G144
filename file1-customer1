@@ -1,188 +1,102 @@
-#include <iostream>
-#include <string>
-#include <vector>
-#include <stdexcept>
+/* ---------------------------
+   STANDARD ROOM
+---------------------------*/
 
-using namespace std;
-/* PERSON BASE CLASS*/
-
-class Person
+class StandardRoom : public Room
 {
-protected:
-    string name;
-    int age;
-
 public:
-    virtual void getDetails()
+    int getPrice()
     {
-        cout<<"Enter Name: ";
-        cin>>name;
-
-        cout<<"Enter Age: ";
-        cin>>age;
-
-        if(age <=0)
-            throw runtime_error("Invalid Age");
-    } 
-virtual void displayDetails()
-    {
-        cout<<"Name: "<<name<<endl;
-        cout<<"Age: "<<age<<endl;
+        return 2000;
     }
 
-    virtual ~Person(){}
-};
-
- /* customer class */
-class Customer : public Person
-{
-private:
-    int customerID;
-    string phone;
-
-public:
-
-    void getDetails() override
+    void displayRoom()
     {
-        Person::getDetails();
-
-        cout<<"Enter Customer ID: ";
-        cin>>customerID;
-
-        cout<<"Enter Phone Number: ";
-        cin>>phone;
-    }
-
-    void displayDetails() override
-    {
-        Person::displayDetails();
-
-        cout<<"Customer ID: "<<customerID<<endl;
-        cout<<"Phone: "<<phone<<endl;
-    }
-
-    int getID()
-    {
-        return customerID;
+        cout<<"Room Number : "<<roomNumber<<endl;
+        cout<<"Room Type : Standard"<<endl;
+        cout<<"Price : 2000 per night"<<endl;
     }
 };
 
-/* room base class */
-
-class Room
-{
-protected:
-    int roomNumber;
-    bool booked;
-    double price;
-
-public:
-
-    Room()
-    {
-        booked=false;
-        roomNumber=0;
-        price=0;
-    }
-
-    virtual void setRoom(int number,double p)
-    {
-        roomNumber=number;
-        price=p;
-    }
-
-    virtual void displayRoom()
-    {
-        cout<<"Room Number: "<<roomNumber<<endl;
-        cout<<"Price: "<<price<<endl;
-
-        if(booked)
-            cout<<"Status: Booked"<<endl;
-        else
-            cout<<"Status: Available"<<endl;
-    }
-
-    virtual void bookRoom()
-    {
-        if(booked)
-            throw runtime_error("Room already booked");
-
-        booked=true;
-    }
-
-    virtual void checkout()
-    {
-        if(!booked)
-            throw runtime_error("Room already empty");
-
-        booked=false;
-    }
-
-    bool isBooked()
-    {
-        return booked;
-    }
-
-    int getRoomNumber()
-    {
-        return roomNumber;
-    }
-
-    double getPrice()
-    {
-        return price;
-    }
-
-    virtual string roomType()
-    {
-        return "Standard";
-    }
-
-    virtual ~Room(){}
-};
-
-*/ deluxe room class */
+/* ---------------------------
+   DELUXE ROOM
+---------------------------*/
 
 class DeluxeRoom : public Room
 {
 public:
-
-    DeluxeRoom()
+    int getPrice()
     {
-        price=3000;
+        return 4000;
     }
 
-    string roomType() override
+    void displayRoom()
     {
-        return "Deluxe";
-    }
-
-    void displayRoom() override
-    {
-        cout<<"--- Deluxe Room ---"<<endl;
-        Room::displayRoom();
+        cout<<"Room Number : "<<roomNumber<<endl;
+        cout<<"Room Type : Deluxe"<<endl;
+        cout<<"Price : 4000 per night"<<endl;
     }
 };
 
-*/ suite room class */
+/* ---------------------------
+   BOOKING CLASS
+---------------------------*/
 
-class SuiteRoom : public Room
+class Booking
 {
+private:
+    Customer customer;
+    Room* room;
+    int days;
+    int bill;
+
 public:
-
-    SuiteRoom()
+    Booking()
     {
-        price=5000;
+        days=0;
+        bill=0;
+        room=NULL;
     }
 
-    string roomType() override
+    void createBooking(Room* r)
     {
-        return "Suite";
+        try
+        {
+            if(r->isBooked())
+            {
+                throw "Room already booked!";
+            }
+
+            room=r;
+
+            cout<<"\nEnter Customer Details\n";
+            customer.inputCustomer();
+
+            cout<<"Enter number of days : ";
+            cin>>days;
+
+            r->bookRoom();
+
+            bill = r->getPrice() * days;
+
+            cout<<"Booking successful!\n";
+        }
+        catch(const char* msg)
+        {
+            cout<<"Error : "<<msg<<endl;
+        }
     }
 
-    void displayRoom() override
+    void displayBooking()
     {
-        cout<<"--- Suite Room ---"<<endl;
-        Room::displayRoom();
+        cout<<"\n------ BOOKING DETAILS ------\n";
+
+        customer.displayCustomer();
+
+        cout<<"Room Number : "<<room->getRoomNumber()<<endl;
+
+        cout<<"Days Stayed : "<<days<<endl;
+
+        cout<<"Total Bill : "<<bill<<endl;
     }
 };
